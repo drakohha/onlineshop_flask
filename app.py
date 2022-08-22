@@ -1,16 +1,22 @@
 from flask import Flask , render_template
 from flask_sqlalchemy import SQLAlchemy
 
-app= Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI']= 'sqlite:///shop.bd'
-db=SQLAlchemy
+app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///shop.bd'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
+
 
 
 class Item(db.Model):
-    id= db.Column(db.integer, primary_key=True)
-    title=''
-    price=0
-    isActive=0
+    id= db.Column(db.Integer, primary_key=True)
+    title=db.Column(db.String(100), nullable=False)
+    price=db.Column(db.Integer, nullable=False)
+    isActive=db.Column(db.Boolean , default=True)
+    #text= db.Column(db.Text , nullable=False)
+
+    def __repr__(self):
+        return self.title
 
 @app.route('/')
 def index():
@@ -19,6 +25,11 @@ def index():
 @app.route('/about')
 def about():
     return render_template('about.html')
+
+@app.route('/create')
+def create():
+    return render_template('create.html')
+
 
 if __name__ == '__main__':
     app.run(debug=True)
